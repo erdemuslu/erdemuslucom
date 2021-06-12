@@ -1,6 +1,12 @@
+import {MainLayout} from '../layouts';
+import {Avatar} from '../components';
+import IMAGES from '../definitions/images';
+
 const Home = () => {
   return (
-    <div>Hello!</div>
+    <MainLayout>
+      <Avatar source={IMAGES.erdem} />
+    </MainLayout>
   );
 };
 
