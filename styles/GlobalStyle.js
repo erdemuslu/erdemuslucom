@@ -39,7 +39,7 @@ export default css.global`
   }
 
   a.is-active {
-    color: var(--success);
+    color: var(--success-100);
     text-decoration: underline;
   }
 
@@ -49,6 +49,6 @@ export default css.global`
   }
 
   a.is-active:hover {
-    color: var(--success-100);
+    color: var(--success);
   }
 `;
