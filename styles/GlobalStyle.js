@@ -5,9 +5,11 @@ export default css.global`
 
   :root {
     --black: #383838;
-    --white: #EFF1F5;
+    --white: #fff;
+    --white-100: #EFF1F5;
     --white-200: #D0D4DC;
     --success: #A5FFD6;
+    --success-100: #11DF81;
   }
 
   * {
@@ -21,7 +23,7 @@ export default css.global`
 
   body {
     background-color: var(--black);
-    color: var(--white);
+    color: var(--white-100);
   }
 
   p {
@@ -42,11 +44,11 @@ export default css.global`
   }
 
   a:hover {
-    color: #fff;
+    color: var(--white);
     text-decoration: underline;
   }
 
   a.is-active:hover {
-    color: #11DF81;
+    color: var(--success-100);
   }
 `;
