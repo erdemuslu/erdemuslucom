@@ -1,4 +1,3 @@
-import _JSXStyle from 'styled-jsx/style';
 import Head from 'next/head';
 import GlobalStyle from '../../styles/GlobalStyle';
 import MainLayoutStyle from './MainLayoutStyle';
