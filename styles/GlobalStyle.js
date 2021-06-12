@@ -29,8 +29,24 @@ export default css.global`
   }
 
   a {
-    color: var(--success);
+    color: var(--white-200);
     font-size: inherit;
     font-weight: 400;
+    transition: color .24s;
+    text-decoration: none;
+  }
+
+  a.is-active {
+    color: var(--success);
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  a.is-active:hover {
+    color: #11DF81;
   }
 `;
