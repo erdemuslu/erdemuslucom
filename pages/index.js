@@ -48,8 +48,8 @@ const Home = () => {
 
         .homepage-content {
           padding-top: 8px;
-          max-width: calc(100% - 2em);
-          width: 38em;
+          max-width: 38em;
+          width: 100%;
         }
 
         .homepage-content p {
