@@ -38,10 +38,12 @@ const Home = () => {
         .homepage {
           display: flex;
           flex-wrap: wrap;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         .homepage-side {
-          margin-right: 114px;
+          margin-right: 5em;
         }
 
         .homepage-content {
