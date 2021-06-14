@@ -8,7 +8,7 @@ const Avatar = ({
 }) => {
   return (
     <div>
-      <Image src={source} alt={alt} width={width} height={height} />
+      <Image src={source} alt={alt} width={width} height={height} priority={true} />
       <style jsx>{`
         div {
           width: ${width}px;
