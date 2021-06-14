@@ -12,7 +12,7 @@ const Home = () => {
       <div className="homepage">
         <div className="homepage-content">
           <p>
-            İzmir’de yaşamakta olan bir yazılım geliştiricisiyim. JavaScript/TypeScript temelinde; web, mobil ve masaüstü uygulamaları geliştirmekteyim. Şu anda {<a className="is-active" href="https://www.yolda.com/">Yolda.com</a>} bünyesinde çalışmaktayım.
+            İzmir’de yaşamakta olan bir yazılım geliştiricisiyim. JavaScript/TypeScript temelinde; web, mobil ve masaüstü uygulamaları geliştirmekte ve şu anda {<a className="is-active" href="https://www.yolda.com/">Yolda.com</a>} bünyesinde çalışmaktayım.
           </p>
           <p>
             Çoğunlukla <i>React</i> ve <i>ReactNative</i> kullanarak geliştirme yapmakla birlikte, çeşitli Node.js ve JavaScript önyüz geliştirme araçlarıyla(<i>Express, Koa, Vue, Nuxt ve Next</i>) da tecrübelerim bulunmaktadır.
