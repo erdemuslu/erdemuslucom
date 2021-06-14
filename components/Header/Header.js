@@ -24,11 +24,11 @@ const Header = () => {
         {
           [
             {
-              text: 'A.M',
+              text: '10:00',
               value: 'light',
             },
             {
-              text: 'P.M',
+              text: '20:00',
               value: 'dark',
             },
           ].map((item, index) => {
