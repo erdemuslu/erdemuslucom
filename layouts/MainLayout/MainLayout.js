@@ -1,31 +1,27 @@
-import Head from 'next/head';
 import GlobalStyle from '../../styles/GlobalStyle';
 import MainLayoutStyle from './MainLayoutStyle';
+import Header from '../../components/Header';
+import { useContext } from 'react';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
-const Layout = ({children}) => {
+const MainLayout = ({children}) => {
+  const {state} = useContext(ThemeContext);
   return (
-    <>
-      <Head>
-        <link rel="shortcut icon" href="/static/favicon.ico" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-        <title>Erdem Uslu</title>
-        <meta name="description" content="Web ve mobil uygulama geliştiricisi" />
-      </Head>
-      <div className="main-layout">
-        {children}
-        <style jsx global>
-          {GlobalStyle}
-        </style>
-        <style jsx>
-          {MainLayoutStyle}
-        </style>
-      </div>
-    </>
+    <div className="main-layout">
+      <Header />
+      {children}
+      <style jsx global>
+        {GlobalStyle}
+      </style>
+      <style jsx>
+        {MainLayoutStyle}
+      </style>
+    </div>
   );
 };
 
-Layout.defaultProps = {
+MainLayout.defaultProps = {
   children: null,
 };
 
-export default Layout;
+export default MainLayout;

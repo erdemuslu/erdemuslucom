@@ -1,37 +1,66 @@
 import css from 'styled-jsx/css';
 
 export default css.global`
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap');
-
-  :root {
-    --black: #383838;
-    --white: #fff;
-    --white-100: #EFF1F5;
-    --white-200: #D0D4DC;
-    --success: #A5FFD6;
-    --success-100: #11DF81;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500&family=Staatliches&display=swap');
 
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-size: 16px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 300;
   }
 
-  body {
-    background-color: var(--black);
-    color: var(--white-100);
+  html, body {
+    height: 100%;
+  }
+
+  #__next {
+    height: 100%;
+  }
+
+  .container {
+    background-color: var(--main-color);
+    color: var(--second-color-100);
+    font-size: 16px;
+    font-family: var(--main-font);
+    font-weight: 300;
+
+    --main-font: Inter;
+    --second-font: Staatliches;
+  }
+
+  .container.is-dark {
+    --main-color: #383838;
+    --second-color: #fff;
+    --second-color-100: #EFF1F5;
+    --second-color-200: #D0D4DC;
+    --second-color-300: #9FA4AE;
+    --success: #A5FFD6;
+    --success-100: #11DF81;
+  }
+
+  .container.is-light {
+    --main-color: #fff;
+    --second-color: #383838;
+    --second-color-100: #4c4c4c;
+    --second-color-200: #616161;
+    --second-color-300: #777676;
+    --success: #A5FFD6;
+    --success-100: #11DF81;
   }
 
   p {
     line-height: 1.5;
   }
 
+  button {
+    border: 0;
+    outline: none;
+    box-shadow: unset;
+    cursor: pointer;
+  }
+
   a {
-    color: var(--white-200);
+    color: var(--second-color-200);
     font-size: inherit;
     font-weight: 400;
     transition: color .24s;
@@ -40,11 +69,10 @@ export default css.global`
 
   a.is-active {
     color: var(--success-100);
-    text-decoration: underline;
   }
 
   a:hover {
-    color: var(--white);
+    color: var(--second-color);
     text-decoration: underline;
   }
 

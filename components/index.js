@@ -1,7 +1,9 @@
-import Avatar from './Avatar';
+import Container from './Container';
+import Header from './Header';
 import Title from './Title';
 
 export {
-  Avatar,
+  Container,
+  Header,
   Title,
 };

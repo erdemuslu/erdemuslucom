@@ -4,9 +4,9 @@ const Title = ({content}) => {
       <h1>{content}</h1>
       <style jsx>{`
         h1 {
-          color: var(--white-100);
-          font-weight: 500;
-          font-size: 1.25em;
+          color: var(--second-color-100);
+          font-family: var(--second-font);
+          font-size: 2.5em;
         }
       `}</style>
     </>
