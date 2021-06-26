@@ -62,12 +62,24 @@ const Header = () => {
         .header-right button {
           background-color: transparent;
           color: var(--second-color-100);
-          font-size: 1em;
+          font-size: .9em;
+          font-weight: 300;
           opacity: .5;
         }
 
         .header-right button.is-active {
+          position: relative;
           opacity: 1;
+        }
+
+        .header-right button.is-active:before {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 1px;
+          top: 100%;
+          left: 0;
+          background-color: currentColor;
         }
 
         .header-right button:first-of-type {
