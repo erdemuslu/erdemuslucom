@@ -74,6 +74,13 @@ const Header = () => {
         .header-right button:first-of-type {
           margin-right: 1em;
         }
+
+        @media screen and (max-width: 800px) {
+          .header-right {
+            width: 100%;
+            margin-top: 32px;
+          }
+        }
       `}</style>
     </header>
   );
