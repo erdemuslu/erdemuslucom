@@ -5,7 +5,6 @@ const Title = ({content}) => {
       <style jsx>{`
         h1 {
           color: var(--second-color-100);
-          font-family: var(--second-font);
           font-size: 2.5em;
         }
       `}</style>

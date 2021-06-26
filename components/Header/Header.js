@@ -62,8 +62,7 @@ const Header = () => {
         .header-right button {
           background-color: transparent;
           color: var(--second-color-100);
-          font-family: var(--second-font);
-          font-size: 1.125em;
+          font-size: 1em;
           opacity: .5;
         }
 

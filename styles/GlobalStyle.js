@@ -1,8 +1,6 @@
 import css from 'styled-jsx/css';
 
 export default css.global`
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500&family=Staatliches&display=swap');
-
   * {
     margin: 0;
     padding: 0;
@@ -24,8 +22,7 @@ export default css.global`
     font-family: var(--main-font);
     font-weight: 300;
 
-    --main-font: Inter;
-    --second-font: Staatliches;
+    --main-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
   }
 
   .container.is-dark {
