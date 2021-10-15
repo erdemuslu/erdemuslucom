@@ -1,3 +1,5 @@
+import _JSXStyle from 'styled-jsx/style';
+
 const Title = ({content}) => {
   return (
     <>

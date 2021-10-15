@@ -1,5 +1,6 @@
 import { ThemeProvider } from "../contexts/ThemeContext";
 import Head from 'next/head';
+import _JSXStyle from 'styled-jsx/style';
 import {Container} from '../components';
 
 const MyApp = ({ Component }) => {

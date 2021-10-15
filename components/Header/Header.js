@@ -1,3 +1,4 @@
+import _JSXStyle from 'styled-jsx/style';
 import { useContext } from 'react';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import Title from '../Title';

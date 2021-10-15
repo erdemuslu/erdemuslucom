@@ -2,6 +2,7 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import MainLayoutStyle from './MainLayoutStyle';
 import { Header, PageWithAnimation } from '../../components';
 import { useContext } from 'react';
+import _JSXStyle from 'styled-jsx/style';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 const MainLayout = ({children}) => {

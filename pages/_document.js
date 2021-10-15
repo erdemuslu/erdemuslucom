@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
+import _JSXStyle from 'styled-jsx/style';
 
 class MyDocument extends Document {
   render() {

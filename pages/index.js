@@ -2,10 +2,6 @@ import _JSXStyle from 'styled-jsx/style';
 import {MainLayout} from '../layouts';
 import URLS from '../utils/homepage-urls';
 
-if (typeof global !== 'undefined') {
-  Object.assign(global, { _JSXStyle })
-}
-
 const Home = () => {
   return (
     <MainLayout>
