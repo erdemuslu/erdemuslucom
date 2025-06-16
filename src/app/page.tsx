@@ -1,6 +1,220 @@
+"use client";
+
 import { HiOutlineMail } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaMedium } from "react-icons/fa";
 import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
+
+// Yılan oyunu bileşeni
+function SnakeGame() {
+  const [gameState, setGameState] = useState("idle"); // 'idle', 'playing', 'gameOver'
+  const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
+  const [food, setFood] = useState({ x: 15, y: 15 });
+  const [direction, setDirection] = useState({ x: 0, y: 1 });
+  const [score, setScore] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const GRID_SIZE = 20;
+  const GAME_SIZE = 400;
+
+  // Rastgele yemek pozisyonu
+  const generateFood = useCallback(() => {
+    const max = GAME_SIZE / GRID_SIZE;
+    return {
+      x: Math.floor(Math.random() * max),
+      y: Math.floor(Math.random() * max),
+    };
+  }, []);
+
+  // Oyunu başlat
+  const startGame = () => {
+    setGameState("playing");
+    setSnake([{ x: 10, y: 10 }]);
+    setFood(generateFood());
+    setDirection({ x: 0, y: 1 });
+    setScore(0);
+  };
+
+  // Oyunu sıfırla
+  const resetGame = () => {
+    setGameState("idle");
+    setSnake([{ x: 10, y: 10 }]);
+    setFood({ x: 15, y: 15 });
+    setDirection({ x: 0, y: 1 });
+    setScore(0);
+  };
+
+  // Klavye kontrolü
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (gameState !== "playing") return;
+
+      switch (e.key) {
+        case "ArrowUp":
+          if (direction.y !== 1) setDirection({ x: 0, y: -1 });
+          break;
+        case "ArrowDown":
+          if (direction.y !== -1) setDirection({ x: 0, y: 1 });
+          break;
+        case "ArrowLeft":
+          if (direction.x !== 1) setDirection({ x: -1, y: 0 });
+          break;
+        case "ArrowRight":
+          if (direction.x !== -1) setDirection({ x: 1, y: 0 });
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [direction, gameState]);
+
+  // Oyun döngüsü
+  useEffect(() => {
+    if (gameState !== "playing") return;
+
+    const gameLoop = setInterval(() => {
+      setSnake((currentSnake) => {
+        const newSnake = [...currentSnake];
+        const head = { ...newSnake[0] };
+
+        head.x += direction.x;
+        head.y += direction.y;
+
+        // Duvarla çarpışma kontrolü
+        if (
+          head.x < 0 ||
+          head.x >= GAME_SIZE / GRID_SIZE ||
+          head.y < 0 ||
+          head.y >= GAME_SIZE / GRID_SIZE
+        ) {
+          setGameState("gameOver");
+          return currentSnake;
+        }
+
+        // Kendine çarpışma kontrolü
+        if (
+          newSnake.some(
+            (segment) => segment.x === head.x && segment.y === head.y
+          )
+        ) {
+          setGameState("gameOver");
+          return currentSnake;
+        }
+
+        newSnake.unshift(head);
+
+        // Yemek yeme kontrolü
+        if (head.x === food.x && head.y === food.y) {
+          setScore((prev) => prev + 10);
+          setFood(generateFood());
+        } else {
+          newSnake.pop();
+        }
+
+        return newSnake;
+      });
+    }, 150);
+
+    return () => clearInterval(gameLoop);
+  }, [direction, food, gameState, generateFood]);
+
+  return (
+    <div
+      className="fixed bottom-4 right-4 w-[400px] h-[400px] bg-black/80 backdrop-blur-sm rounded-lg border border-indigo-500/30 hidden xl:block z-50"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Dikkat çekici animasyon */}
+      {gameState === "idle" && !isHovered && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl animate-bounce mb-4">🐍</div>
+            <div className="text-indigo-300 text-sm animate-pulse">
+              Yılan Oyunu
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hover durumunda başla butonu */}
+      {gameState === "idle" && isHovered && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <button
+            onClick={startGame}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300 animate-pulse"
+          >
+            🐍 Başla
+          </button>
+        </div>
+      )}
+
+      {/* Oyun alanı */}
+      {gameState === "playing" && (
+        <div className="relative w-full h-full">
+          {/* Skor */}
+          <div className="absolute top-2 left-2 text-white text-sm font-bold z-10">
+            Skor: {score}
+          </div>
+
+          {/* Oyun grid'i */}
+          <div className="relative w-full h-full">
+            {/* Yılan */}
+            {snake.map((segment, index) => (
+              <div
+                key={index}
+                className={`absolute ${
+                  index === 0 ? "bg-green-400" : "bg-green-600"
+                } rounded-sm`}
+                style={{
+                  left: segment.x * GRID_SIZE,
+                  top: segment.y * GRID_SIZE,
+                  width: GRID_SIZE - 1,
+                  height: GRID_SIZE - 1,
+                }}
+              />
+            ))}
+
+            {/* Yemek */}
+            <div
+              className="absolute bg-red-500 rounded-full animate-pulse"
+              style={{
+                left: food.x * GRID_SIZE + 2,
+                top: food.y * GRID_SIZE + 2,
+                width: GRID_SIZE - 4,
+                height: GRID_SIZE - 4,
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Game Over ekranı */}
+      {gameState === "gameOver" && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/90">
+          <div className="text-center">
+            <div className="text-red-500 text-4xl mb-4">💀</div>
+            <div className="text-white text-xl mb-2">Oyun Bitti!</div>
+            <div className="text-indigo-300 mb-4">Skor: {score}</div>
+            <button
+              onClick={resetGame}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition-colors duration-300"
+            >
+              Tekrar Oyna
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Kontrol ipuçları */}
+      {gameState === "playing" && (
+        <div className="absolute bottom-2 right-2 text-xs text-gray-400">
+          ↑↓←→ ile kontrol et
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -119,6 +333,9 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      {/* Yılan Oyunu */}
+      <SnakeGame />
     </main>
   );
 }
