@@ -346,10 +346,13 @@ export default function Home() {
           </h2>
           <div className="space-y-3 xl:space-y-4 2xl:space-y-6">
             <div>
-              <div className="text-indigo-300 font-medium flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg xl:text-xl 2xl:text-2xl">
+              <a
+                href="mailto:erdem@erdemuslu.com"
+                className="text-indigo-300 hover:text-indigo-200 font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg xl:text-xl 2xl:text-2xl"
+              >
                 <HiOutlineMail className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
                 erdem [at] erdemuslu [dot] com
-              </div>
+              </a>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 xl:gap-8 2xl:gap-10">
               <a
