@@ -7,24 +7,45 @@ import { useState, useEffect, useCallback } from "react";
 
 // Yılan oyunu bileşeni
 function SnakeGame() {
+  const GRID_SIZE = 20;
+  const GAME_SIZE = 400;
+  const GRID_COUNT = GAME_SIZE / GRID_SIZE;
+
   const [gameState, setGameState] = useState("idle"); // 'idle', 'playing', 'gameOver'
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
   const [food, setFood] = useState({ x: 15, y: 15 });
   const [direction, setDirection] = useState({ x: 0, y: 1 });
   const [score, setScore] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [currentGridSize, setCurrentGridSize] = useState(GRID_SIZE);
 
-  const GRID_SIZE = 20;
-  const GAME_SIZE = 400;
+  // 4K ekranlar için responsive grid boyutu
+  const getResponsiveGridSize = () => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1536) {
+      // 2xl breakpoint
+      return GRID_SIZE * 2; // 4K'da grid boyutunu 2 katına çıkar
+    }
+    return GRID_SIZE;
+  };
+
+  // Ekran boyutu değişikliklerini dinle
+  useEffect(() => {
+    const updateGridSize = () => {
+      setCurrentGridSize(getResponsiveGridSize());
+    };
+
+    updateGridSize(); // İlk yükleme
+    window.addEventListener("resize", updateGridSize);
+    return () => window.removeEventListener("resize", updateGridSize);
+  }, []);
 
   // Rastgele yemek pozisyonu
   const generateFood = useCallback(() => {
-    const max = GAME_SIZE / GRID_SIZE;
     return {
-      x: Math.floor(Math.random() * max),
-      y: Math.floor(Math.random() * max),
+      x: Math.floor(Math.random() * GRID_COUNT),
+      y: Math.floor(Math.random() * GRID_COUNT),
     };
-  }, []);
+  }, [GRID_COUNT]);
 
   // Oyunu başlat
   const startGame = () => {
@@ -81,16 +102,11 @@ function SnakeGame() {
         head.x += direction.x;
         head.y += direction.y;
 
-        // Duvarla çarpışma kontrolü
-        if (
-          head.x < 0 ||
-          head.x >= GAME_SIZE / GRID_SIZE ||
-          head.y < 0 ||
-          head.y >= GAME_SIZE / GRID_SIZE
-        ) {
-          setGameState("gameOver");
-          return currentSnake;
-        }
+        // Duvardan geçiş (wrap around)
+        if (head.x < 0) head.x = GRID_COUNT - 1;
+        if (head.x >= GRID_COUNT) head.x = 0;
+        if (head.y < 0) head.y = GRID_COUNT - 1;
+        if (head.y >= GRID_COUNT) head.y = 0;
 
         // Kendine çarpışma kontrolü
         if (
@@ -121,7 +137,7 @@ function SnakeGame() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 w-[400px] h-[400px] bg-black/80 backdrop-blur-sm rounded-lg border border-indigo-500/30 hidden xl:block z-50"
+      className="fixed bottom-4 right-4 w-[400px] h-[400px] 2xl:w-[800px] 2xl:h-[800px] bg-black/80 backdrop-blur-sm rounded-lg border border-indigo-500/30 hidden xl:block z-50"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -129,8 +145,8 @@ function SnakeGame() {
       {gameState === "idle" && !isHovered && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-6xl animate-bounce mb-4">🐍</div>
-            <div className="text-indigo-300 text-sm animate-pulse">
+            <div className="text-6xl 2xl:text-8xl animate-bounce mb-4">🐍</div>
+            <div className="text-indigo-300 text-sm 2xl:text-lg animate-pulse">
               Yılan Oyunu
             </div>
           </div>
@@ -142,7 +158,7 @@ function SnakeGame() {
         <div className="absolute inset-0 flex items-center justify-center">
           <button
             onClick={startGame}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300 animate-pulse"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 2xl:px-12 2xl:py-6 rounded-lg font-bold text-lg 2xl:text-2xl transition-colors duration-300 animate-pulse"
           >
             🐍 Başla
           </button>
@@ -153,12 +169,42 @@ function SnakeGame() {
       {gameState === "playing" && (
         <div className="relative w-full h-full">
           {/* Skor */}
-          <div className="absolute top-2 left-2 text-white text-sm font-bold z-10">
+          <div className="absolute top-2 left-2 text-white text-sm 2xl:text-xl font-bold z-10">
             Skor: {score}
           </div>
 
           {/* Oyun grid'i */}
           <div className="relative w-full h-full">
+            {/* Grid çizgileri */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Dikey çizgiler */}
+              {Array.from({ length: GRID_COUNT + 1 }).map((_, i) => (
+                <div
+                  key={`v-${i}`}
+                  className="absolute bg-white/5"
+                  style={{
+                    left: i * currentGridSize,
+                    top: 0,
+                    width: 1,
+                    height: "100%",
+                  }}
+                />
+              ))}
+              {/* Yatay çizgiler */}
+              {Array.from({ length: GRID_COUNT + 1 }).map((_, i) => (
+                <div
+                  key={`h-${i}`}
+                  className="absolute bg-white/5"
+                  style={{
+                    left: 0,
+                    top: i * currentGridSize,
+                    width: "100%",
+                    height: 1,
+                  }}
+                />
+              ))}
+            </div>
+
             {/* Yılan */}
             {snake.map((segment, index) => (
               <div
@@ -167,10 +213,10 @@ function SnakeGame() {
                   index === 0 ? "bg-green-400" : "bg-green-600"
                 } rounded-sm`}
                 style={{
-                  left: segment.x * GRID_SIZE,
-                  top: segment.y * GRID_SIZE,
-                  width: GRID_SIZE - 1,
-                  height: GRID_SIZE - 1,
+                  left: segment.x * currentGridSize,
+                  top: segment.y * currentGridSize,
+                  width: currentGridSize - 1,
+                  height: currentGridSize - 1,
                 }}
               />
             ))}
@@ -179,10 +225,10 @@ function SnakeGame() {
             <div
               className="absolute bg-red-500 rounded-full animate-pulse"
               style={{
-                left: food.x * GRID_SIZE + 2,
-                top: food.y * GRID_SIZE + 2,
-                width: GRID_SIZE - 4,
-                height: GRID_SIZE - 4,
+                left: food.x * currentGridSize + 2,
+                top: food.y * currentGridSize + 2,
+                width: currentGridSize - 4,
+                height: currentGridSize - 4,
               }}
             />
           </div>
@@ -193,12 +239,16 @@ function SnakeGame() {
       {gameState === "gameOver" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/90">
           <div className="text-center">
-            <div className="text-red-500 text-4xl mb-4">💀</div>
-            <div className="text-white text-xl mb-2">Oyun Bitti!</div>
-            <div className="text-indigo-300 mb-4">Skor: {score}</div>
+            <div className="text-red-500 text-4xl 2xl:text-6xl mb-4">💀</div>
+            <div className="text-white text-xl 2xl:text-3xl mb-2">
+              Oyun Bitti!
+            </div>
+            <div className="text-indigo-300 2xl:text-xl mb-4">
+              Skor: {score}
+            </div>
             <button
               onClick={resetGame}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition-colors duration-300"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 2xl:px-8 2xl:py-3 rounded-lg font-bold 2xl:text-lg transition-colors duration-300"
             >
               Tekrar Oyna
             </button>
@@ -208,7 +258,7 @@ function SnakeGame() {
 
       {/* Kontrol ipuçları */}
       {gameState === "playing" && (
-        <div className="absolute bottom-2 right-2 text-xs text-gray-400">
+        <div className="absolute bottom-2 right-2 text-xs 2xl:text-base text-gray-400">
           ↑↓←→ ile kontrol et
         </div>
       )}
