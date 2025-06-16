@@ -8,8 +8,7 @@ import { useState, useEffect, useCallback } from "react";
 // Yılan oyunu bileşeni
 function SnakeGame() {
   const GRID_SIZE = 20;
-  const GAME_SIZE = 400;
-  const GRID_COUNT = GAME_SIZE / GRID_SIZE;
+  const BASE_GAME_SIZE = 400;
 
   const [gameState, setGameState] = useState("idle"); // 'idle', 'playing', 'gameOver'
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
@@ -18,25 +17,29 @@ function SnakeGame() {
   const [score, setScore] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [currentGridSize, setCurrentGridSize] = useState(GRID_SIZE);
+  const [currentGameSize, setCurrentGameSize] = useState(BASE_GAME_SIZE);
 
-  // 4K ekranlar için responsive grid boyutu
-  const getResponsiveGridSize = () => {
-    if (typeof window !== "undefined" && window.innerWidth >= 1536) {
-      // 2xl breakpoint
-      return GRID_SIZE * 2; // 4K'da grid boyutunu 2 katına çıkar
+  const GRID_COUNT = currentGameSize / GRID_SIZE;
+
+  // Responsive game size - ekran 1600px altında 200, üzerinde 400
+  const getResponsiveGameSize = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 1600) {
+      return 200;
     }
-    return GRID_SIZE;
+
+    return BASE_GAME_SIZE;
   };
 
   // Ekran boyutu değişikliklerini dinle
   useEffect(() => {
-    const updateGridSize = () => {
-      setCurrentGridSize(getResponsiveGridSize());
+    const updateSizes = () => {
+      setCurrentGridSize(getResponsiveGameSize());
+      setCurrentGameSize(getResponsiveGameSize());
     };
 
-    updateGridSize(); // İlk yükleme
-    window.addEventListener("resize", updateGridSize);
-    return () => window.removeEventListener("resize", updateGridSize);
+    updateSizes(); // İlk yükleme
+    window.addEventListener("resize", updateSizes);
+    return () => window.removeEventListener("resize", updateSizes);
   }, []);
 
   // Rastgele yemek pozisyonu
@@ -137,7 +140,17 @@ function SnakeGame() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 w-[400px] h-[400px] 2xl:w-[800px] 2xl:h-[800px] bg-black/80 backdrop-blur-sm rounded-lg border border-indigo-500/30 hidden xl:block z-50"
+      className="fixed bottom-4 right-4 bg-black/80 backdrop-blur-sm rounded-lg border border-indigo-500/30 hidden xl:block z-50"
+      style={{
+        width:
+          currentGridSize === GRID_SIZE * 2
+            ? currentGameSize * 2
+            : currentGameSize,
+        height:
+          currentGridSize === GRID_SIZE * 2
+            ? currentGameSize * 2
+            : currentGameSize,
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -267,22 +280,38 @@ function SnakeGame() {
 }
 
 export default function Home() {
+  const [logoSize, setLogoSize] = useState(16);
+
+  console.log(logoSize);
+
+  useEffect(() => {
+    const updateLogoSize = () => {
+      if (typeof window !== "undefined") {
+        setLogoSize(window.innerWidth >= 2000 ? 32 : 16);
+      }
+    };
+
+    updateLogoSize();
+    window.addEventListener("resize", updateLogoSize);
+    return () => window.removeEventListener("resize", updateLogoSize);
+  }, []);
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900">
       <div className="px-8 xl:px-16 2xl:px-24 py-16 xl:py-24 2xl:py-32 max-w-4xl xl:max-w-6xl 2xl:max-w-7xl">
         {/* Hero Section */}
-        <section className="mb-16 xl:mb-24 2xl:mb-32">
-          <h1 className="text-5xl md:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-white mb-2 xl:mb-4 2xl:mb-6 font-serif">
+        <section className="mb-16 min-[2000px]:mb-32">
+          <h1 className="text-2xl md:text-5xl min-[2000px]:text-8xl font-bold text-white mb-2 min-[2000px]:mb-6 font-serif">
             Erdem Uslu
           </h1>
-          <h2 className="text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl text-indigo-300 mb-8 xl:mb-12 2xl:mb-16 font-sans">
+          <h2 className="text-2xl md:text-3xl min-[2000px]:text-5xl text-indigo-300 font-sans">
             Frontend Developer
           </h2>
         </section>
 
         {/* About Section */}
-        <section className="mb-16 xl:mb-24 2xl:mb-32">
-          <div className="text-md xl:text-lg 2xl:text-3xl text-slate-300 leading-relaxed xl:leading-relaxed 2xl:leading-relaxed space-y-6 xl:space-y-8 2xl:space-y-10 font-inter">
+        <section className="mb-16 min-[2000px]:mb-32">
+          <div className="text-lg min-[2000px]:text-2xl text-slate-300 leading-relaxed xl:leading-relaxed 2xl:leading-relaxed space-y-6 xl:space-y-8 2xl:space-y-10 font-inter">
             <p>
               Yaklaşık olarak 10 senedir{" "}
               <em>&quot;frontend development&quot;</em> alanında uzmanlaşmış bir
@@ -299,13 +328,13 @@ export default function Home() {
                 <Image
                   src="/ikas-logo.webp"
                   alt="ikas"
-                  width={32}
-                  height={32}
-                  className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7 rounded-sm"
+                  width={logoSize}
+                  height={logoSize}
+                  className="rounded-sm"
                 />
                 <span
                   style={{ color: "#dfff37" }}
-                  className="text-lg xl:text-xl 2xl:text-2xl font-medium"
+                  className="text-lg min-[2000px]:text-xl 2xl:text-2xl font-medium"
                 >
                   ikas
                 </span>
@@ -341,14 +370,14 @@ export default function Home() {
 
         {/* Links Section */}
         <section>
-          <h2 className="text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 xl:mb-6 2xl:mb-8 font-serif">
+          <h2 className="text-2xl min-[2000px]:text-5xl font-bold text-white mb-4 xl:mb-6 2xl:mb-8 font-serif">
             Bağlantılar
           </h2>
           <div className="space-y-3 xl:space-y-4 2xl:space-y-6">
             <div>
               <a
                 href="mailto:erdem@erdemuslu.com"
-                className="text-indigo-300 hover:text-indigo-200 font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg xl:text-xl 2xl:text-2xl"
+                className="text-indigo-300 hover:text-indigo-200 font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
               >
                 <HiOutlineMail className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
                 erdem [at] erdemuslu [dot] com
@@ -359,7 +388,7 @@ export default function Home() {
                 href="https://github.com/erdemuslu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg xl:text-xl 2xl:text-2xl"
+                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
               >
                 <FaGithub className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
                 GitHub
@@ -368,7 +397,7 @@ export default function Home() {
                 href="https://www.linkedin.com/in/erdem-uslu/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg xl:text-xl 2xl:text-2xl"
+                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
               >
                 <FaLinkedin className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
                 LinkedIn
@@ -377,7 +406,7 @@ export default function Home() {
                 href="https://medium.com/@erdemuslu"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg xl:text-xl 2xl:text-2xl"
+                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
               >
                 <FaMedium className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
                 Medium
