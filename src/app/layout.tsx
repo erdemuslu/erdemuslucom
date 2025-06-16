@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: "Erdem Uslu - Frontend Developer",
   description:
     "Aydın'da yaşayan yazılım geliştirici. JavaScript/TypeScript, React, React Native ile web ve mobil uygulama geliştirme.",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
