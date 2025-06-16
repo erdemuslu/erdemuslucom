@@ -14,9 +14,9 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Erdem Uşlu - Frontend Developer",
+  title: "Erdem Uslu - Frontend Developer",
   description:
-    "İzmir'de yaşayan yazılım geliştirici. JavaScript/TypeScript, React, React Native ile web ve mobil uygulama geliştirme.",
+    "Aydın'da yaşayan yazılım geliştirici. JavaScript/TypeScript, React, React Native ile web ve mobil uygulama geliştirme.",
 };
 
 export default function RootLayout({
