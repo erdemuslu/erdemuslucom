@@ -314,9 +314,9 @@ export default function Home() {
               katkıda bulunuyorum.
             </p>
             <p>
-              <em>&quot;CSS&quot;</em>&apos;in tüm gelişimine tanıklık ettim ve
-              çeşitli <em>&quot;pre-processor&quot;</em> ya da{" "}
-              <em>&quot;framework&quot;</em>&apos;ler ile deneyim kazandım.{" "}
+              <em>&quot;CSS&quot;</em>&apos;in tüm gelişimine tanıklık etmekle
+              birlikte çeşitli <em>&quot;pre-processor&quot;</em> ya da{" "}
+              <em>&quot;framework&quot;</em>&apos;ler ile de deneyim kazandım.{" "}
               <em>&quot;Styled Components&quot;</em>,{" "}
               <em>&quot;Tailwind CSS&quot;</em>, <em>&quot;SCSS&quot;</em> ve{" "}
               <em>&quot;Less&quot;</em> gibi araçlarla çalışma fırsatı
