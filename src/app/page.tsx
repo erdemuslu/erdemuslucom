@@ -16,25 +16,16 @@ function SnakeGame() {
   const [direction, setDirection] = useState({ x: 0, y: 1 });
   const [score, setScore] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [currentGridSize, setCurrentGridSize] = useState(GRID_SIZE);
-  const [currentGameSize, setCurrentGameSize] = useState(BASE_GAME_SIZE);
+  const [currentGridSize] = useState(GRID_SIZE);
+  const [currentGameSize] = useState(BASE_GAME_SIZE);
 
   const GRID_COUNT = currentGameSize / GRID_SIZE;
-
-  // Responsive game size - ekran 1600px altında 200, üzerinde 400
-  const getResponsiveGameSize = () => {
-    if (typeof window !== "undefined" && window.innerWidth < 1600) {
-      return 200;
-    }
-
-    return BASE_GAME_SIZE;
-  };
 
   // Ekran boyutu değişikliklerini dinle
   useEffect(() => {
     const updateSizes = () => {
-      setCurrentGridSize(getResponsiveGameSize());
-      setCurrentGameSize(getResponsiveGameSize());
+      // setCurrentGridSize(getResponsiveGameSize());
+      // setCurrentGameSize(getResponsiveGameSize());
     };
 
     updateSizes(); // İlk yükleme
