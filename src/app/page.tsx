@@ -284,7 +284,7 @@ export default function Home() {
         <section className="mb-16 xl:mb-24 2xl:mb-32">
           <div className="text-lg xl:text-xl 2xl:text-3xl text-slate-300 leading-relaxed xl:leading-relaxed 2xl:leading-relaxed space-y-6 xl:space-y-8 2xl:space-y-10 font-inter">
             <p>
-              Aydın&apos;da yaşıyor, 10 senedir{" "}
+              Yaklaşık olarak 10 senedir{" "}
               <em>&quot;frontend development&quot;</em> alanında uzmanlaşmış bir
               yazılım geliştiricisiyim. <em>&quot;JavaScript&quot;</em> ve{" "}
               <em>&quot;TypeScript&quot;</em> teknolojilerini temel alarak,
