@@ -282,7 +282,7 @@ export default function Home() {
 
         {/* About Section */}
         <section className="mb-16 xl:mb-24 2xl:mb-32">
-          <div className="text-lg xl:text-xl 2xl:text-3xl text-slate-300 leading-relaxed xl:leading-relaxed 2xl:leading-relaxed space-y-6 xl:space-y-8 2xl:space-y-10 font-inter">
+          <div className="text-md xl:text-lg 2xl:text-3xl text-slate-300 leading-relaxed xl:leading-relaxed 2xl:leading-relaxed space-y-6 xl:space-y-8 2xl:space-y-10 font-inter">
             <p>
               Yaklaşık olarak 10 senedir{" "}
               <em>&quot;frontend development&quot;</em> alanında uzmanlaşmış bir
