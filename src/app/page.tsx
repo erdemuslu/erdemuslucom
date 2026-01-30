@@ -289,7 +289,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900">
-      <div className="px-8 xl:px-16 2xl:px-24 py-16 xl:py-24 2xl:py-32 max-w-4xl xl:max-w-6xl 2xl:max-w-7xl">
+      <div className="px-8 xl:pl-16 xl:pr-[450px] 2xl:pl-24 2xl:pr-[480px] py-16 xl:py-24 2xl:py-32">
         {/* Hero Section */}
         <section className="mb-16 min-[2000px]:mb-32">
           <h1 className="text-2xl md:text-5xl min-[2000px]:text-8xl font-bold text-white mb-2 min-[2000px]:mb-6 font-serif">
