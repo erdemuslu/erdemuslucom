@@ -1,414 +1,399 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import { HiOutlineMail } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaMedium } from "react-icons/fa";
-import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
+import { HiSun, HiMoon } from "react-icons/hi";
 
-// Yılan oyunu bileşeni
-function SnakeGame() {
-  const GRID_SIZE = 20;
-  const BASE_GAME_SIZE = 400;
+type Lang = "tr" | "en";
 
-  const [gameState, setGameState] = useState("idle"); // 'idle', 'playing', 'gameOver'
-  const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-  const [food, setFood] = useState({ x: 15, y: 15 });
-  const [direction, setDirection] = useState({ x: 0, y: 1 });
-  const [score, setScore] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [currentGridSize] = useState(GRID_SIZE);
-  const [currentGameSize] = useState(BASE_GAME_SIZE);
+const translations = {
+  tr: {
+    about: "Hakkımda",
+    skills: "Yeteneklerim",
+    experience: "Deneyim",
+    contact: "İletişim",
+    aboutParagraphs: [
+      "10 yıllık yazılım geliştirme deneyimimde, modern web teknolojileri kullanarak ölçeklenebilir ve kullanıcı odaklı ürünler geliştirdim. E-ticaret, SaaS platformları ve lojistik sistemleri gibi farklı sektörlerde frontend mimarisi ve ekip yönetimi konularında sorumluluk aldım.",
+      "React, Next.js ve TypeScript ekosisteminde uzmanlaşarak, Yolda.com'da frontend mimarisini sıfırdan kurdum ve ekip liderliği yaptım. Jotform'da milyonlarca kullanıcıya hizmet eden, test odaklı ve sürdürülebilir kod yapıları geliştirdim. İkas ve retter.io gibi projelerde performans kritik uygulamalar ve dinamik arayüz sistemleri üzerinde çalıştım.",
+      "Yazılım geliştirme yaklaşımımda performans, erişilebilirlik ve sürdürülebilirlik önceliklidir. Modern web standartlarını ve best practice'leri uygulayarak, hem geliştirici deneyimini hem de son kullanıcı memnuniyetini ön planda tutan çözümler üretiyorum.",
+    ],
+    experiences: [
+      {
+        company: "ikas",
+        role: "Senior Frontend Developer",
+        duration: "10 ay",
+        descriptions: [
+          "Sürükle-bırak prensibiyle çalışan modüler e-ticaret altyapılarının React ve TypeScript ile geliştirilmesi.",
+          "Styled-components kullanarak ölçeklenebilir, performanslı ve yeniden kullanılabilir UI kütüphanelerinin (Design System) inşası.",
+        ],
+      },
+      {
+        company: "retter.io",
+        role: "Frontend Developer",
+        duration: "1 yıl 2 ay",
+        descriptions: [
+          "Next.js, TypeScript ve Tailwind CSS kullanarak yüksek trafikli e-ticaret sistemleri için modern web arayüzleri tasarımı.",
+          "React Native ve Expo ekosistemiyle Android ve iOS platformları için çapraz platform mobil uygulama geliştirme süreçlerinin yönetimi.",
+        ],
+      },
+      {
+        company: "Yolda.com",
+        role: "Frontend Developer / Team Lead",
+        duration: "3 yıl 1 ay",
+        descriptions: [
+          "Bir lojistik startup'ının tüm front-end mimarisinin sıfırdan React, TypeScript ve Atomic Design prensipleriyle kurgulanması.",
+          "Mühendislik ekibine liderlik ederek teknik standartların belirlenmesi, kod kalitesinin artırılması ve proje teslim süreçlerinin uçtan uca yönetimi.",
+        ],
+      },
+      {
+        company: "Jotform",
+        role: "Frontend Developer",
+        duration: "1 yıl 8 ay",
+        descriptions: [
+          "Milyonlarca kullanıcıya hizmet veren global bir üründe, React ve Redux-Saga tabanlı ölçeklenebilir mimarilerin geliştirilmesi.",
+          "Cypress ve Jest kullanarak kapsamlı E2E test stratejilerinin oluşturulması ve hata payının minimize edilmesi.",
+        ],
+      },
+      {
+        company: "Hubx",
+        role: "Frontend Developer",
+        duration: "1 yıl 5 ay",
+        descriptions: [
+          "Mobil uygulamalar için yüksek etkileşimli Webview arayüzlerinin ve karmaşık yönetim panellerinin geliştirilmesi.",
+          "React ve Vanilla JavaScript kullanarak front-end altyapısının modernizasyonu ve performans optimizasyonu.",
+        ],
+      },
+      {
+        company: "Marketcolor",
+        role: "Frontend Developer",
+        duration: "Proje Temelli",
+        descriptions: [
+          "Mikro sitelerden, ağır animasyon içeren SPA projelerine kadar geniş bir yelpazede ürün geliştirme.",
+          "Jenkins üzerinden CI/CD süreçlerinin yönetimi ve gelişmiş CSS animasyonlarıyla kullanıcı deneyiminin zenginleştirilmesi.",
+        ],
+      },
+      {
+        company: "Optimum7",
+        role: "Frontend Developer",
+        duration: "1 yıl 9 ay",
+        descriptions: [
+          "Shopify ve BigCommerce gibi popüler e-ticaret platformları için özel temalar ve eklentiler geliştirilmesi.",
+          "Vanilla JavaScript ve jQuery kullanarak yüksek performanslı front-end çözümlerinin hayata geçirilmesi.",
+        ],
+      },
+    ],
+  },
+  en: {
+    about: "About",
+    skills: "Skills",
+    experience: "Experience",
+    contact: "Contact",
+    aboutParagraphs: [
+      "Throughout my 10 years of software development experience, I have built scalable and user-centric products using modern web technologies. I have taken on responsibilities in frontend architecture and team management across diverse industries including e-commerce, SaaS platforms, and logistics systems.",
+      "Specializing in the React, Next.js, and TypeScript ecosystem, I built the entire frontend architecture from scratch at Yolda.com and led the engineering team. At Jotform, I developed test-driven and maintainable code structures serving millions of users. I worked on performance-critical applications and dynamic interface systems at ikas and retter.io.",
+      "In my approach to software development, performance, accessibility, and maintainability are top priorities. By applying modern web standards and best practices, I deliver solutions that prioritize both developer experience and end-user satisfaction.",
+    ],
+    experiences: [
+      {
+        company: "ikas",
+        role: "Senior Frontend Developer",
+        duration: "10 mos",
+        descriptions: [
+          "Development of modular e-commerce infrastructures with drag-and-drop functionality using React and TypeScript.",
+          "Building scalable, performant, and reusable UI libraries (Design System) with styled-components.",
+        ],
+      },
+      {
+        company: "retter.io",
+        role: "Frontend Developer",
+        duration: "1 yr 2 mos",
+        descriptions: [
+          "Designing modern web interfaces for high-traffic e-commerce systems using Next.js, TypeScript, and Tailwind CSS.",
+          "Managing cross-platform mobile application development for Android and iOS using React Native and Expo ecosystem.",
+        ],
+      },
+      {
+        company: "Yolda.com",
+        role: "Frontend Developer / Team Lead",
+        duration: "3 yrs 1 mo",
+        descriptions: [
+          "Architecting the entire front-end of a logistics startup from scratch using React, TypeScript, and Atomic Design principles.",
+          "Leading the engineering team to establish technical standards, improve code quality, and manage end-to-end project delivery.",
+        ],
+      },
+      {
+        company: "Jotform",
+        role: "Frontend Developer",
+        duration: "1 yr 8 mos",
+        descriptions: [
+          "Developing scalable architectures based on React and Redux-Saga for a global product serving millions of users.",
+          "Establishing comprehensive E2E testing strategies using Cypress and Jest to minimize error rates.",
+        ],
+      },
+      {
+        company: "Hubx",
+        role: "Frontend Developer",
+        duration: "1 yr 5 mos",
+        descriptions: [
+          "Developing highly interactive Webview interfaces and complex admin dashboards for mobile applications.",
+          "Modernizing front-end infrastructure and optimizing performance using React and Vanilla JavaScript.",
+        ],
+      },
+      {
+        company: "Marketcolor",
+        role: "Frontend Developer",
+        duration: "Project Based",
+        descriptions: [
+          "Product development across a wide range from micro sites to animation-heavy Single Page Applications (SPA).",
+          "Managing CI/CD pipelines on Jenkins and enriching user experience with advanced CSS animations.",
+        ],
+      },
+      {
+        company: "Optimum7",
+        role: "Frontend Developer",
+        duration: "1 yr 9 mos",
+        descriptions: [
+          "Developing custom themes and plugins for popular e-commerce platforms like Shopify and BigCommerce.",
+          "Delivering high-performance front-end solutions using Vanilla JavaScript and jQuery.",
+        ],
+      },
+    ],
+  },
+} as const;
 
-  const GRID_COUNT = currentGameSize / GRID_SIZE;
+function ThemeToggle() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
-  // Ekran boyutu değişikliklerini dinle
   useEffect(() => {
-    const updateSizes = () => {
-      // setCurrentGridSize(getResponsiveGameSize());
-      // setCurrentGameSize(getResponsiveGameSize());
-    };
-
-    updateSizes(); // İlk yükleme
-    window.addEventListener("resize", updateSizes);
-    return () => window.removeEventListener("resize", updateSizes);
+    const current = document.documentElement.getAttribute("data-theme");
+    if (current === "dark" || current === "light") {
+      setTheme(current);
+    }
   }, []);
 
-  // Rastgele yemek pozisyonu
-  const generateFood = useCallback(() => {
-    return {
-      x: Math.floor(Math.random() * GRID_COUNT),
-      y: Math.floor(Math.random() * GRID_COUNT),
-    };
-  }, [GRID_COUNT]);
-
-  // Oyunu başlat
-  const startGame = () => {
-    setGameState("playing");
-    setSnake([{ x: 10, y: 10 }]);
-    setFood(generateFood());
-    setDirection({ x: 0, y: 1 });
-    setScore(0);
+  const toggle = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
   };
-
-  // Oyunu sıfırla
-  const resetGame = () => {
-    setGameState("idle");
-    setSnake([{ x: 10, y: 10 }]);
-    setFood({ x: 15, y: 15 });
-    setDirection({ x: 0, y: 1 });
-    setScore(0);
-  };
-
-  // Klavye kontrolü
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (gameState !== "playing") return;
-
-      switch (e.key) {
-        case "ArrowUp":
-          if (direction.y !== 1) setDirection({ x: 0, y: -1 });
-          break;
-        case "ArrowDown":
-          if (direction.y !== -1) setDirection({ x: 0, y: 1 });
-          break;
-        case "ArrowLeft":
-          if (direction.x !== 1) setDirection({ x: -1, y: 0 });
-          break;
-        case "ArrowRight":
-          if (direction.x !== -1) setDirection({ x: 1, y: 0 });
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [direction, gameState]);
-
-  // Oyun döngüsü
-  useEffect(() => {
-    if (gameState !== "playing") return;
-
-    const gameLoop = setInterval(() => {
-      setSnake((currentSnake) => {
-        const newSnake = [...currentSnake];
-        const head = { ...newSnake[0] };
-
-        head.x += direction.x;
-        head.y += direction.y;
-
-        // Duvardan geçiş (wrap around)
-        if (head.x < 0) head.x = GRID_COUNT - 1;
-        if (head.x >= GRID_COUNT) head.x = 0;
-        if (head.y < 0) head.y = GRID_COUNT - 1;
-        if (head.y >= GRID_COUNT) head.y = 0;
-
-        // Kendine çarpışma kontrolü
-        if (
-          newSnake.some(
-            (segment) => segment.x === head.x && segment.y === head.y
-          )
-        ) {
-          setGameState("gameOver");
-          return currentSnake;
-        }
-
-        newSnake.unshift(head);
-
-        // Yemek yeme kontrolü
-        if (head.x === food.x && head.y === food.y) {
-          setScore((prev) => prev + 10);
-          setFood(generateFood());
-        } else {
-          newSnake.pop();
-        }
-
-        return newSnake;
-      });
-    }, 150);
-
-    return () => clearInterval(gameLoop);
-  }, [direction, food, gameState, generateFood]);
 
   return (
-    <div
-      className="fixed bottom-4 right-4 bg-black/80 backdrop-blur-sm rounded-lg border border-indigo-500/30 hidden xl:block z-50"
-      style={{
-        width:
-          currentGridSize === GRID_SIZE * 2
-            ? currentGameSize * 2
-            : currentGameSize,
-        height:
-          currentGridSize === GRID_SIZE * 2
-            ? currentGameSize * 2
-            : currentGameSize,
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <button
+      onClick={toggle}
+      aria-label="Tema değiştir"
+      className="text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
     >
-      {/* Dikkat çekici animasyon */}
-      {gameState === "idle" && !isHovered && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-6xl 2xl:text-8xl animate-bounce mb-4">🐍</div>
-            <div className="text-indigo-300 text-sm 2xl:text-lg animate-pulse">
-              Yılan Oyunu
-            </div>
-          </div>
-        </div>
+      {theme === "dark" ? (
+        <HiSun className="w-5 h-5" />
+      ) : (
+        <HiMoon className="w-5 h-5" />
       )}
-
-      {/* Hover durumunda başla butonu */}
-      {gameState === "idle" && isHovered && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <button
-            onClick={startGame}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 2xl:px-12 2xl:py-6 rounded-lg font-bold text-lg 2xl:text-2xl transition-colors duration-300 animate-pulse"
-          >
-            🐍 Başla
-          </button>
-        </div>
-      )}
-
-      {/* Oyun alanı */}
-      {gameState === "playing" && (
-        <div className="relative w-full h-full">
-          {/* Skor */}
-          <div className="absolute top-2 left-2 text-white text-sm 2xl:text-xl font-bold z-10">
-            Skor: {score}
-          </div>
-
-          {/* Oyun grid'i */}
-          <div className="relative w-full h-full">
-            {/* Grid çizgileri */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Dikey çizgiler */}
-              {Array.from({ length: GRID_COUNT + 1 }).map((_, i) => (
-                <div
-                  key={`v-${i}`}
-                  className="absolute bg-white/5"
-                  style={{
-                    left: i * currentGridSize,
-                    top: 0,
-                    width: 1,
-                    height: "100%",
-                  }}
-                />
-              ))}
-              {/* Yatay çizgiler */}
-              {Array.from({ length: GRID_COUNT + 1 }).map((_, i) => (
-                <div
-                  key={`h-${i}`}
-                  className="absolute bg-white/5"
-                  style={{
-                    left: 0,
-                    top: i * currentGridSize,
-                    width: "100%",
-                    height: 1,
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Yılan */}
-            {snake.map((segment, index) => (
-              <div
-                key={index}
-                className={`absolute ${
-                  index === 0 ? "bg-green-400" : "bg-green-600"
-                } rounded-sm`}
-                style={{
-                  left: segment.x * currentGridSize,
-                  top: segment.y * currentGridSize,
-                  width: currentGridSize - 1,
-                  height: currentGridSize - 1,
-                }}
-              />
-            ))}
-
-            {/* Yemek */}
-            <div
-              className="absolute bg-red-500 rounded-full animate-pulse"
-              style={{
-                left: food.x * currentGridSize + 2,
-                top: food.y * currentGridSize + 2,
-                width: currentGridSize - 4,
-                height: currentGridSize - 4,
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Game Over ekranı */}
-      {gameState === "gameOver" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/90">
-          <div className="text-center">
-            <div className="text-red-500 text-4xl 2xl:text-6xl mb-4">💀</div>
-            <div className="text-white text-xl 2xl:text-3xl mb-2">
-              Oyun Bitti!
-            </div>
-            <div className="text-indigo-300 2xl:text-xl mb-4">
-              Skor: {score}
-            </div>
-            <button
-              onClick={resetGame}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 2xl:px-8 2xl:py-3 rounded-lg font-bold 2xl:text-lg transition-colors duration-300"
-            >
-              Tekrar Oyna
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Kontrol ipuçları */}
-      {gameState === "playing" && (
-        <div className="absolute bottom-2 right-2 text-xs 2xl:text-base text-gray-400">
-          ↑↓←→ ile kontrol et
-        </div>
-      )}
-    </div>
+    </button>
   );
 }
 
-export default function Home() {
-  const [logoSize, setLogoSize] = useState(16);
+function LanguageToggle({
+  lang,
+  onToggle,
+}: {
+  lang: Lang;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      aria-label="Change language"
+      className="font-mono text-xs text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
+    >
+      {lang === "tr" ? "EN" : "TR"}
+    </button>
+  );
+}
 
-  console.log(logoSize);
+const skills = [
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Next.js",
+  "Vue",
+  "Nuxt",
+  "React Native",
+  "Expo",
+  "Node.js",
+  "Express.js",
+  "Tailwind CSS",
+];
+
+export default function Home() {
+  const [lang, setLang] = useState<Lang>("tr");
 
   useEffect(() => {
-    const updateLogoSize = () => {
-      if (typeof window !== "undefined") {
-        setLogoSize(window.innerWidth >= 2000 ? 32 : 16);
-      }
-    };
-
-    updateLogoSize();
-    window.addEventListener("resize", updateLogoSize);
-    return () => window.removeEventListener("resize", updateLogoSize);
+    const saved = localStorage.getItem("lang");
+    if (saved === "en" || saved === "tr") {
+      setLang(saved);
+    }
   }, []);
 
+  const toggleLang = () => {
+    const next = lang === "tr" ? "en" : "tr";
+    setLang(next);
+    localStorage.setItem("lang", next);
+    document.documentElement.setAttribute("lang", next);
+  };
+
+  const t = translations[lang];
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900">
-      <div className="px-8 xl:pl-16 xl:pr-[450px] 2xl:pl-24 2xl:pr-[480px] py-16 xl:py-24 2xl:py-32">
-        {/* Hero Section */}
-        <section className="mb-16 min-[2000px]:mb-32">
-          <h1 className="text-2xl md:text-5xl min-[2000px]:text-8xl font-bold text-white mb-2 min-[2000px]:mb-6 font-serif">
-            Erdem Uslu
-          </h1>
-          <h2 className="text-2xl md:text-3xl min-[2000px]:text-5xl text-indigo-300 font-sans">
-            Frontend Developer
-          </h2>
-        </section>
-
-        {/* About Section */}
-        <section className="mb-16 min-[2000px]:mb-32">
-          <div className="text-lg min-[2000px]:text-2xl text-slate-300 leading-relaxed xl:leading-relaxed 2xl:leading-relaxed space-y-6 xl:space-y-8 2xl:space-y-10 font-inter">
-            <p>
-              Yaklaşık olarak 10 senedir{" "}
-              <em>&quot;frontend development&quot;</em> alanında uzmanlaşmış bir
-              yazılım geliştiricisiyim. <em>&quot;JavaScript&quot;</em> ve{" "}
-              <em>&quot;TypeScript&quot;</em> teknolojilerini temel alarak,
-              modern web ve mobil uygulamaları geliştiriyorum. Şu anda{" "}
-              <a
-                href="https://ikas.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:opacity-80 transition-opacity duration-300 inline-flex items-center"
-                style={{ gap: "2px" }}
-              >
-                <Image
-                  src="/ikas-logo.webp"
-                  alt="ikas"
-                  width={logoSize}
-                  height={logoSize}
-                  className="rounded-sm"
-                />
-                <span
-                  style={{ color: "#dfff37" }}
-                  className="text-lg min-[2000px]:text-xl 2xl:text-2xl font-medium"
-                >
-                  ikas
-                </span>
-              </a>{" "}
-              bünyesinde çalışarak, e-ticaret ekosisteminin geliştirilmesine
-              katkıda bulunuyorum.
-            </p>
-            <p>
-              <em>&quot;CSS&quot;</em>&apos;in tüm gelişimine tanıklık etmekle
-              birlikte çeşitli <em>&quot;pre-processor&quot;</em> ya da{" "}
-              <em>&quot;framework&quot;</em>&apos;ler ile de deneyim kazandım.{" "}
-              <em>&quot;Styled Components&quot;</em>,{" "}
-              <em>&quot;Tailwind CSS&quot;</em>, <em>&quot;SCSS&quot;</em> ve{" "}
-              <em>&quot;Less&quot;</em> gibi araçlarla çalışma fırsatı
-              yakaladım. Bu çeşitli <em>&quot;styling&quot;</em> yaklaşımları,
-              projelerime en uygun tasarım çözümlerini seçebilme yetkinliği
-              kazandırdı.
-            </p>
-            <p>
-              Kariyerim boyunca <em>&quot;React&quot;</em> ve{" "}
-              <em>&quot;React Native&quot;</em> ile çok sayıda proje
-              geliştirdim, <em>&quot;Node.js&quot;</em> (
-              <em>&quot;Express&quot;</em>, <em>&quot;Koa&quot;</em>) ile
-              backend çözümleri ürettim. Ayrıca <em>&quot;Next.js&quot;</em>,{" "}
-              <em>&quot;Vue&quot;</em> ve <em>&quot;Nuxt&quot;</em> gibi modern{" "}
-              <em>&quot;framework&quot;</em>&apos;lerle de kapsamlı deneyim
-              sahibiyim. Bu geniş teknoloji yelpazesi,{" "}
-              <em>&quot;end-to-end&quot;</em> çözümler geliştirebilmemi
-              sağlıyor.
-            </p>
-          </div>
-        </section>
-
-        {/* Links Section */}
-        <section>
-          <h2 className="text-2xl min-[2000px]:text-5xl font-bold text-white mb-4 xl:mb-6 2xl:mb-8 font-serif">
-            Bağlantılar
-          </h2>
-          <div className="space-y-3 xl:space-y-4 2xl:space-y-6">
+    <main className="min-h-screen bg-bg">
+      <div className="max-w-2xl mx-auto px-6 py-16 md:py-24">
+        {/* Hero */}
+        <section className="mb-16">
+          <div className="flex items-center gap-4">
+            <Image
+              src="/erdem_uslu.jpg"
+              alt="Erdem Uslu"
+              width={64}
+              height={64}
+              className="rounded-full grayscale"
+            />
             <div>
-              <a
-                href="mailto:erdem@erdemuslu.com"
-                className="text-indigo-300 hover:text-indigo-200 font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
-              >
-                <HiOutlineMail className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
-                erdem [at] erdemuslu [dot] com
-              </a>
+              <h1 className="text-2xl font-bold text-text font-serif">
+                Erdem Uslu
+              </h1>
+              <p className="font-mono text-sm text-accent">
+                Senior Frontend Developer
+              </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 xl:gap-8 2xl:gap-10">
-              <a
-                href="https://github.com/erdemuslu"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
-              >
-                <FaGithub className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
-                GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/erdem-uslu/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
-              >
-                <FaLinkedin className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
-                LinkedIn
-              </a>
-              <a
-                href="https://medium.com/@erdemuslu"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-white font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2 flex items-center gap-2 xl:gap-3 2xl:gap-4 text-lg min-[2000px]:text-2xl"
-              >
-                <FaMedium className="w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8" />
-                Medium
-              </a>
+            <div className="ml-auto flex items-center gap-3">
+              <LanguageToggle lang={lang} onToggle={toggleLang} />
+              <ThemeToggle />
             </div>
           </div>
         </section>
-      </div>
 
-      {/* Yılan Oyunu */}
-      <SnakeGame />
+        {/* Hakkımda */}
+        <section className="mb-16">
+          <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
+            {t.about}
+          </h2>
+          <div className="space-y-4 text-text-muted leading-relaxed">
+            {t.aboutParagraphs.map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+        </section>
+
+        <hr className="border-border mb-16" />
+
+        {/* Yetenekler */}
+        <section className="mb-16">
+          <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
+            {t.skills}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((skill) => (
+              <span
+                key={skill}
+                className="font-mono text-xs px-3 py-1.5 rounded-full border border-border text-text-muted"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <hr className="border-border mb-16" />
+
+        {/* Deneyim */}
+        <section className="mb-16">
+          <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-8">
+            {t.experience}
+          </h2>
+          <div className="space-y-10">
+            {t.experiences.map((exp) => (
+              <div key={exp.company}>
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-2">
+                  <div>
+                    <span className="font-semibold text-text">
+                      {exp.company}
+                    </span>
+                    <span className="text-text-faint mx-2">&mdash;</span>
+                    <span className="text-text-muted">{exp.role}</span>
+                  </div>
+                  <span className="font-mono text-xs text-text-faint shrink-0">
+                    {exp.duration}
+                  </span>
+                </div>
+                <ul className="space-y-1">
+                  {exp.descriptions.map((desc, i) => (
+                    <li
+                      key={i}
+                      className="text-sm text-text-muted leading-relaxed pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.6em] before:w-1.5 before:h-px before:bg-text-faint"
+                    >
+                      {desc}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <hr className="border-border mb-16" />
+
+        {/* İletişim */}
+        <section className="mb-16">
+          <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
+            {t.contact}
+          </h2>
+          <div className="flex items-center gap-5 flex-wrap">
+            <a
+              href="mailto:erdem@erdemuslu.com"
+              className="flex items-center gap-2 text-text-muted hover:text-accent transition-colors duration-200"
+            >
+              <HiOutlineMail className="w-4 h-4" />
+              <span className="text-sm">Email</span>
+            </a>
+            <a
+              href="https://github.com/erdemuslu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-text-muted hover:text-accent transition-colors duration-200"
+            >
+              <FaGithub className="w-4 h-4" />
+              <span className="text-sm">GitHub</span>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/erdem-uslu/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-text-muted hover:text-accent transition-colors duration-200"
+            >
+              <FaLinkedin className="w-4 h-4" />
+              <span className="text-sm">LinkedIn</span>
+            </a>
+            <a
+              href="https://medium.com/@erdemuslu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-text-muted hover:text-accent transition-colors duration-200"
+            >
+              <FaMedium className="w-4 h-4" />
+              <span className="text-sm">Medium</span>
+            </a>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="pt-8 border-t border-border">
+          <p className="font-mono text-xs text-text-faint">
+            &copy; {new Date().getFullYear()} Erdem Uslu
+          </p>
+        </footer>
+      </div>
     </main>
   );
 }
