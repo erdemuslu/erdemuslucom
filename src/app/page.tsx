@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { HiOutlineMail } from "react-icons/hi";
+import { HiOutlineMail, HiExternalLink, HiMenu, HiX } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaMedium } from "react-icons/fa";
 import { HiSun, HiMoon } from "react-icons/hi";
 
@@ -12,6 +12,9 @@ const translations = {
   tr: {
     about: "Hakkımda",
     skills: "Yeteneklerim",
+    blog: "Blog",
+    blogSeeAll: "Tüm yazıları gör",
+    blogReadTime: "dk okuma",
     experience: "Deneyim",
     contact: "İletişim",
     aboutParagraphs: [
@@ -88,6 +91,9 @@ const translations = {
   en: {
     about: "About",
     skills: "Skills",
+    blog: "Blog",
+    blogSeeAll: "See all articles",
+    blogReadTime: "min read",
     experience: "Experience",
     contact: "Contact",
     aboutParagraphs: [
@@ -213,6 +219,39 @@ function LanguageToggle({
   );
 }
 
+const blogPosts = [
+  {
+    title: "useEffectEvent Nedir, Nasıl Kullanılır?",
+    url: "https://erdemuslu.medium.com/useeffectevent-nedir-nas%C4%B1l-kullan%C4%B1l%C4%B1r-c5585095ed73",
+    date: "2025-10-13",
+    readingTime: 4,
+  },
+  {
+    title: "Activity Bileşeni ile Arayüz Yönetimi",
+    url: "https://erdemuslu.medium.com/activity-bile%C5%9Feni-ile-aray%C3%BCz-y%C3%B6netimi-ed5b8e38e9dd",
+    date: "2025-10-09",
+    readingTime: 4,
+  },
+  {
+    title: "Redux-Saga Üzerine: Nedir, Nasıl Kullanılır?",
+    url: "https://erdemuslu.medium.com/redux-saga-%C3%BCzerine-nedir-nas%C4%B1l-kullan%C4%B1l%C4%B1r-17dfb6800602",
+    date: "2021-09-12",
+    readingTime: 6,
+  },
+  {
+    title: "Redux Üzerine — Vanilla JS ile nasıl kullanılır?",
+    url: "https://erdemuslu.medium.com/redux-%C3%BCzerine-vanilla-js-ile-nas%C4%B1l-kullan%C4%B1l%C4%B1r-bb70aeadc9c1",
+    date: "2020-12-06",
+    readingTime: 11,
+  },
+  {
+    title: "Mobx Üzerine: Nedir, Nasıl Kullanılır? v2",
+    url: "https://erdemuslu.medium.com/mobx-%C3%BCzerine-nedir-nas%C4%B1l-kullan%C4%B1l%C4%B1r-e821952023b2",
+    date: "2020-04-25",
+    readingTime: 9,
+  },
+];
+
 const skills = [
   "JavaScript",
   "TypeScript",
@@ -246,8 +285,68 @@ export default function Home() {
 
   const t = translations[lang];
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navItems = [
+    { id: "about", label: t.about },
+    { id: "skills", label: t.skills },
+    { id: "blog", label: t.blog },
+    { id: "experience", label: t.experience },
+    { id: "contact", label: t.contact },
+  ];
+
   return (
     <main className="min-h-screen bg-bg">
+      {/* Nav */}
+      <nav className="sticky top-0 z-10 bg-bg/80 backdrop-blur-sm border-b border-border">
+        <div className="max-w-2xl mx-auto px-6 flex items-center justify-between h-10">
+          {/* Desktop nav */}
+          <div className="hidden sm:flex items-center gap-4">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className="font-mono text-xs text-text-muted hover:text-text transition-colors duration-200"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menu"
+            className="sm:hidden text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
+          >
+            {menuOpen ? <HiX className="w-5 h-5" /> : <HiMenu className="w-5 h-5" />}
+          </button>
+
+          <div className="flex items-center gap-3">
+            <LanguageToggle lang={lang} onToggle={toggleLang} />
+            <ThemeToggle />
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="sm:hidden border-t border-border bg-bg/95 backdrop-blur-sm">
+            <div className="max-w-2xl mx-auto px-6 py-3 flex flex-col gap-3">
+              {navItems.map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="font-mono text-sm text-text-muted hover:text-text transition-colors duration-200"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+
       <div className="max-w-2xl mx-auto px-6 py-16 md:py-24">
         {/* Hero */}
         <section className="mb-16">
@@ -267,15 +366,11 @@ export default function Home() {
                 Senior Frontend Developer
               </p>
             </div>
-            <div className="ml-auto flex items-center gap-3">
-              <LanguageToggle lang={lang} onToggle={toggleLang} />
-              <ThemeToggle />
-            </div>
           </div>
         </section>
 
         {/* Hakkımda */}
-        <section className="mb-16">
+        <section id="about" className="mb-16 scroll-mt-14">
           <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
             {t.about}
           </h2>
@@ -289,7 +384,7 @@ export default function Home() {
         <hr className="border-border mb-16" />
 
         {/* Yetenekler */}
-        <section className="mb-16">
+        <section id="skills" className="mb-16 scroll-mt-14">
           <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
             {t.skills}
           </h2>
@@ -307,8 +402,47 @@ export default function Home() {
 
         <hr className="border-border mb-16" />
 
+        {/* Blog */}
+        <section id="blog" className="mb-16 scroll-mt-14">
+          <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
+            {t.blog}
+          </h2>
+          <ul className="space-y-4">
+            {blogPosts.map((post) => (
+              <li key={post.url}>
+                <a
+                  href={post.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between gap-3 text-text-muted hover:text-accent transition-colors duration-200"
+                >
+                  <div>
+                    <span className="text-sm">{post.title}</span>
+                    <div className="font-mono text-xs text-text-faint mt-0.5">
+                      {new Date(post.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { year: "numeric", month: "short", day: "numeric" })}
+                      <span className="mx-1.5">&middot;</span>
+                      {post.readingTime} {t.blogReadTime}
+                    </div>
+                  </div>
+                  <HiExternalLink className="w-3.5 h-3.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="https://medium.com/@erdemuslu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-5 font-mono text-xs text-accent hover:text-accent-hover transition-colors duration-200"
+          >
+            {t.blogSeeAll} &rarr;
+          </a>
+        </section>
+
+        <hr className="border-border mb-16" />
+
         {/* Deneyim */}
-        <section className="mb-16">
+        <section id="experience" className="mb-16 scroll-mt-14">
           <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-8">
             {t.experience}
           </h2>
@@ -345,7 +479,7 @@ export default function Home() {
         <hr className="border-border mb-16" />
 
         {/* İletişim */}
-        <section className="mb-16">
+        <section id="contact" className="mb-16 scroll-mt-14">
           <h2 className="font-mono text-xs uppercase tracking-widest text-text-faint mb-6">
             {t.contact}
           </h2>
